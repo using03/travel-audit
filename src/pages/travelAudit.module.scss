@@ -1,0 +1,35 @@
+.header {
+  display: flex; //flex 布局
+  padding: 0 16px;
+  justify-content: space-between;
+  align-items: center;
+  .left {
+    color: #fff;
+  }
+  .right {
+    margin-top: 12px;
+    text-align: right; //向右靠齐
+    color: #fff;
+  }
+}
+.content {
+  height: calc(100vh - 64px - 16px);
+  display: flex;
+  flex-direction: column;
+  .searchForm {
+    margin-top: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .tableContainer {
+    flex: 1;
+    margin-top: 12px;
+    padding: 20px;
+  }
+}
+
+.modal {
+  top: 50%; /* 垂直居中 */
+  // transform: translateY(-50%); /* 微调垂直位置 */
+  margin: 0 auto; /* 水平居中 */
+}
