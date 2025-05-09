@@ -1,0 +1,36 @@
+.detailContainer {
+  padding: 20px;
+  height: 100%;
+  overflow: auto;
+
+  .header {
+    .authorInfo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #666;
+
+      .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .imageGallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .image {
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+    }
+  }
+
+  .content {
+    margin-top: 20px;
+  }
+}
