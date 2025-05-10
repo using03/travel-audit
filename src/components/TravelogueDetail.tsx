@@ -33,7 +33,7 @@ const TravelogueDetail: React.FC<TravelogueDetailProps> = ({ travelogue }) => {
   return (
     <div className={styles.detailContainer}>
       <Card>
-        <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        <Space direction="vertical" size="large">
           <div className={styles.header}>
             <Title level={3}>{travelogue.title}</Title>
             <div className={styles.authorInfo}>

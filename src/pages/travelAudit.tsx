@@ -34,20 +34,21 @@ import {
   getTravelogueList,
   updateTravelogueStatus,
 } from "../services/travelogue";
+import { ColumnsType } from "antd/es/table";
 const { Title, Paragraph } = Typography;
 const { Header, Content } = Layout;
 const { TextArea } = Input;
-// 将时间戳格式化为"年-月-日"格式的函数
-function formatDate(timestamp: string) {
-  const date = new Date(+timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+// // 将时间戳格式化为"年-月-日"格式的函数
+// function formatDate(timestamp: string) {
+//   const date = new Date(+timestamp);
+//   const year = date.getFullYear();
+//   const month = String(date.getMonth() + 1).padStart(2, "0");
+//   const day = String(date.getDate()).padStart(2, "0");
+//   return `${year}-${month}-${day}`;
+// }
 
 const TravelAudit: FC = () => {
-  const columns = [
+  const columns: ColumnsType<TableRecord> = [
     {
       title: "状态",
       dataIndex: "status", // dataSource的键会与dataIndex匹配
@@ -120,15 +121,15 @@ const TravelAudit: FC = () => {
       dataIndex: "travelTitle",
       key: "travelTitle",
     },
-    {
-      title: "申请日期",
-      dataIndex: "applyDate",
-      key: "applyDate",
-      render: (text: string) => formatDate(text),
-      sorter: (a: TableRecord, b: TableRecord) =>
-        Number(a.applyDate) - Number(b.applyDate),
-      sortDirections: ["descend", "ascend"],
-    },
+    // {
+    //   title: "申请日期",
+    //   dataIndex: "applyDate",
+    //   key: "applyDate",
+    //   render: (text: string) => formatDate(text),
+    //   sorter: (a: TableRecord, b: TableRecord) =>
+    //     Number(a.applyDate) - Number(b.applyDate),
+    //   sortDirections: ["descend", "ascend"],
+    // },
     {
       title: "游记详情以及操作",
       dataIndex: "action",
@@ -516,8 +517,16 @@ const TravelAudit: FC = () => {
           values.adminname,
           values.password
         );
-        const { adminname, role } = response as unknown as AdminInfoType;
-        setAdminInfo({ adminname, role });
+        const { adminInfo } = response as unknown as {
+          adminInfo: {
+            adminname: string;
+            role: string;
+          };
+        };
+        setAdminInfo({
+          adminname: adminInfo.adminname,
+          role: adminInfo.role,
+        });
         setHasLoggedIn(true);
 
         messageApi.open({
@@ -837,8 +846,8 @@ interface TableRecord {
   travelID: number;
   travelTitle: string;
   travelContent: string;
-  applyDate: number;
   action: string;
+  applyDate?: number;
 }
 type AdminInfoType = {
   adminname: string;
