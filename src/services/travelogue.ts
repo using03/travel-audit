@@ -60,3 +60,30 @@ export const deleteTravelogue = async (travelID: number) => {
     throw error;
   }
 };
+
+// 通过搜索条件获取游记列表
+export const searchTravelogues = async (searchParams: any) => {
+  try {
+    const queryParams = new URLSearchParams();
+
+    if (searchParams) {
+      Object.entries(searchParams).forEach(([key, value]) => {
+        if (value) {
+          if (Array.isArray(value)) {
+            value.forEach((v) => queryParams.append(key, v));
+          } else {
+            queryParams.append(key, value.toString());
+          }
+        }
+      });
+    }
+
+    const response = await travelogueInstance.get(
+      `/travelogues/search?${queryParams.toString()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("搜索游记列表失败:", error);
+    throw error;
+  }
+};

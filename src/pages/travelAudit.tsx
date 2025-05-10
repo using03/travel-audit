@@ -32,6 +32,7 @@ import {
   deleteTravelogue,
   getTravelogueDetail,
   getTravelogueList,
+  searchTravelogues,
   updateTravelogueStatus,
 } from "../services/travelogue";
 import { ColumnsType } from "antd/es/table";
@@ -93,13 +94,20 @@ const TravelAudit: FC = () => {
         return text;
       },
       onFilter: (value: string, record: TableRecord) => {
+        // console.log("value", value);
+        // console.log("record", record);
         return record.status === value;
       },
     },
+    // {
+    //   title: "审核ID",
+    //   dataIndex: "reviewID",
+    //   key: "reviewID",
+    // },
     {
-      title: "审核ID",
-      dataIndex: "reviewID",
-      key: "reviewID",
+      title: "游记ID",
+      dataIndex: "travelID",
+      key: "travelID",
     },
     {
       title: "作者ID",
@@ -111,11 +119,7 @@ const TravelAudit: FC = () => {
       dataIndex: "authorName",
       key: "authorName",
     },
-    {
-      title: "游记ID",
-      dataIndex: "travelID",
-      key: "travelID",
-    },
+
     {
       title: "游记标题",
       dataIndex: "travelTitle",
@@ -318,16 +322,44 @@ const TravelAudit: FC = () => {
   // ];
   const SearchForm: React.FC = () => {
     const [form] = Form.useForm();
+    const [searchSelectedValues, setSearchSelectedValues] = useState([""]);
 
-    const onSearchSubmit = () => {
-      console.log(form.getFieldsValue());
+    const onSearchSubmit = async () => {
+      try {
+        const values = form.getFieldsValue();
+        const data = await searchTravelogues(values);
+        setDataSource(
+          data.map((item: Travelogue) => ({
+            key: item.id,
+            status:
+              item.status === 0
+                ? "待审核"
+                : item.status === 1
+                ? "已通过"
+                : "未通过",
+            authorID: item.authorID,
+            authorName: item.author,
+            travelID: item.id,
+            travelTitle: item.title,
+            travelDesc: item.desc,
+            action: "",
+          }))
+        );
+      } catch (error) {
+        messageApi.open({
+          type: "error",
+          content: "搜索失败",
+        });
+        console.log("搜索失败", error);
+      }
     };
-    const [searchSelectedValues, setSearchSelectedValues] = useState([
-      "待审核",
-    ]);
     const handleSearchStatusChange = (values: string[]) => {
       setSearchSelectedValues(values);
       console.log("当前选中：", values);
+    };
+    const handleReset = () => {
+      form.resetFields();
+      setSearchSelectedValues([""]);
     };
     const formItems = [
       {
@@ -379,20 +411,20 @@ const TravelAudit: FC = () => {
         // 标记为按钮
         isButton: true,
         element: (
-          <Button type="primary" onClick={onSearchSubmit}>
-            搜索
-          </Button>
+          <Space>
+            <Button type="primary" onClick={onSearchSubmit}>
+              搜索
+            </Button>
+            <Button type="primary" onClick={handleReset}>
+              重置
+            </Button>
+          </Space>
         ),
       },
     ];
 
     return (
-      <Form
-        layout={"horizontal"}
-        form={form}
-        //   onValuesChange={onFormLayoutChange}
-        style={{ maxWidth: "none" }}
-      >
+      <Form layout={"horizontal"} form={form} style={{ maxWidth: "none" }}>
         <Row gutter={16}>
           {formItems.map((item) => {
             if (item.isButton) {
@@ -534,6 +566,9 @@ const TravelAudit: FC = () => {
           content: "已登录",
         });
         setIsModalOpen(false);
+
+        // 获取游记列表
+        fetchTravelogues();
       } catch (error) {
         console.error("登录失败", error);
         messageApi.open({
@@ -572,12 +607,15 @@ const TravelAudit: FC = () => {
     }
   };
 
+  // 检查认证状态
   const checkAuthStatus = async () => {
     try {
       const { isAuthenticated, adminInfo } = await checkAdminAuthStatus();
       setHasLoggedIn(isAuthenticated);
       if (isAuthenticated && adminInfo) {
         setAdminInfo(adminInfo as unknown as AdminInfoType);
+        // 获取游记列表
+        fetchTravelogues();
       } else {
         // 如果未登录，则打开登录模态窗
         setModalTitle(`登录`);
@@ -617,6 +655,8 @@ const TravelAudit: FC = () => {
       setLoading(false);
     }
   };
+
+  // 拒绝通过游记审核
   const rejectTravelogue = async () => {
     if (!currentTravelogue) return;
 
@@ -690,13 +730,13 @@ const TravelAudit: FC = () => {
               : item.status === 1
               ? "已通过"
               : "未通过",
-          reviewID: item.id,
-          authorID: item.author,
+          // reviewID: item.id,
+          authorID: item.authorID,
           authorName: item.author,
           travelID: item.id,
           travelTitle: item.title,
-          travelContent: item.desc,
-          applyDate: item.applyDate || new Date().getTime(),
+          travelDesc: item.desc,
+          // applyDate: item.applyDate || new Date().getTime(),
           action: "",
         }))
       );
@@ -714,8 +754,7 @@ const TravelAudit: FC = () => {
   useEffect(() => {
     // 检查初始登录状态
     checkAuthStatus();
-    // 获取游记列表
-    fetchTravelogues();
+
     document.title = "旅游日记平台审核管理系统";
   }, []);
 
@@ -786,19 +825,13 @@ const TravelAudit: FC = () => {
                   }
                   onConfirm={confirmReject}
                   onCancel={cancelReject}
-                  // onOpenChange={cancelReject} //用户点击外部区域或其他方式关闭弹窗
                   okText="提交拒绝"
                   okButtonProps={{
                     disabled: !rejectReason.trim(), // 当rejectReason为空或只有空格时禁用
                   }}
                   cancelText="取消"
                 >
-                  <Button
-                    key="reject"
-                    color="danger"
-                    variant="solid"
-                    // loading={loading}
-                  >
+                  <Button key="reject" color="danger" variant="solid">
                     不通过
                   </Button>
                 </Popconfirm>,
@@ -827,12 +860,14 @@ interface Travelogue {
   title: string;
   desc: string;
   author: string;
+  authorID: string;
   imglist: string[];
   avatar: string;
   views: number;
   status: number;
   reason: string;
   isdeleted: boolean;
+  video?: string;
   applyDate?: Date;
 }
 
@@ -840,12 +875,11 @@ interface Travelogue {
 interface TableRecord {
   key: number;
   status: string;
-  reviewID: number;
   authorID: string;
   authorName: string;
   travelID: number;
   travelTitle: string;
-  travelContent: string;
+  travelDesc: string;
   action: string;
   applyDate?: number;
 }

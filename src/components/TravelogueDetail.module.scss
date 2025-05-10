@@ -18,6 +18,11 @@
     }
   }
 
+  .video {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
   .imageGallery {
     display: flex;
     flex-wrap: wrap;

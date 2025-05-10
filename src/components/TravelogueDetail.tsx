@@ -15,6 +15,7 @@ interface TravelogueDetailProps {
     views: number;
     status: number;
     reason: string;
+    video?: string;
   };
 }
 
@@ -46,6 +47,18 @@ const TravelogueDetail: React.FC<TravelogueDetailProps> = ({ travelogue }) => {
               <span>作者：{travelogue.author}</span>
             </div>
           </div>
+
+          {/* 视频展示 */}
+          {travelogue.video && (
+            <video
+              controls
+              width="100%"
+              src={travelogue.video}
+              className={styles.video}
+            >
+              您的浏览器不支持视频播放
+            </video>
+          )}
 
           <div className={styles.imageGallery}>
             {travelogue.imglist.map((img, index) => (
