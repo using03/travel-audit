@@ -15,6 +15,7 @@
 .content {
   height: calc(100vh - 64px - 16px);
   display: flex;
+  padding: 12px;
   flex-direction: column;
 
   .searchForm {
@@ -25,7 +26,7 @@
   .tableContainer {
     flex: 1 1 0%;
     overflow: auto;
-    margin-top: 12px;
+    margin: 10px;
     min-height: 0;
   }
 }

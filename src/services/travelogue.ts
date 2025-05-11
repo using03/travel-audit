@@ -6,9 +6,10 @@ const travelogueInstance = axios.create({
 });
 
 // 获取游记列表
-export const getTravelogueList = async () => {
+export const getTravelogueList = async (page: number) => {
   try {
-    const response = await travelogueInstance.get("/travelogues");
+    const url = `/travelogues?page=${page}`;
+    const response = await travelogueInstance.get(url);
     return response.data;
   } catch (error) {
     console.error("获取游记列表失败:", error);

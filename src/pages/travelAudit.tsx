@@ -163,7 +163,12 @@ const TravelAudit: FC = () => {
                 okText="确定"
                 cancelText="取消"
               >
-                <Button icon={<DeleteOutlined />} size="small">
+                <Button
+                  icon={<DeleteOutlined />}
+                  size="small"
+                  color="danger"
+                  variant="filled"
+                >
                   删除
                 </Button>
               </Popconfirm>
@@ -415,7 +420,7 @@ const TravelAudit: FC = () => {
             <Button type="primary" onClick={onSearchSubmit}>
               搜索
             </Button>
-            <Button type="primary" onClick={handleReset}>
+            <Button type="default" onClick={handleReset}>
               重置
             </Button>
           </Space>
@@ -457,6 +462,7 @@ const TravelAudit: FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [currentTravelogue, setCurrentTravelogue] = useState<Travelogue>();
   const [dataSource, setDataSource] = useState<TableRecord[]>([]);
+  const [total, setTotal] = useState<number>(0);
 
   // 添加Form引用
   const [loginForm] = Form.useForm();
@@ -715,11 +721,12 @@ const TravelAudit: FC = () => {
       setLoading(false);
     }
   };
+
   // 获取游记列表
-  const fetchTravelogues = async () => {
+  const fetchTravelogues = async (page: number = 1) => {
     setLoading(true);
     try {
-      const data = await getTravelogueList();
+      const { total, data } = await getTravelogueList(page);
       // console.log("游记列表", data);
       setDataSource(
         data.map((item: Travelogue) => ({
@@ -740,6 +747,7 @@ const TravelAudit: FC = () => {
           action: "",
         }))
       );
+      setTotal(total);
     } catch (error) {
       messageApi.open({
         type: "error",
@@ -789,7 +797,18 @@ const TravelAudit: FC = () => {
           </div>
           <div className={styles.tableContainer}>
             <Card>
-              <Table dataSource={dataSource} columns={columns} sticky={true} />
+              <Table
+                dataSource={dataSource}
+                columns={columns}
+                sticky={true}
+                pagination={{
+                  total: total, // 总数据条数
+                  pageSize: 10, // 每页显示条数
+                  onChange: (page) => {
+                    fetchTravelogues(page);
+                  },
+                }}
+              />
             </Card>
           </div>
         </Content>
