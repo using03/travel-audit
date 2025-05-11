@@ -54,20 +54,7 @@ const TravelAudit: FC = () => {
       title: "状态",
       dataIndex: "status", // dataSource的键会与dataIndex匹配
       key: "status",
-      filters: [
-        {
-          text: "待审核",
-          value: "待审核",
-        },
-        {
-          text: "已通过",
-          value: "已通过",
-        },
-        {
-          text: "未通过",
-          value: "未通过",
-        },
-      ],
+
       render: (text: string) => {
         if (text === "待审核") {
           return (
@@ -92,11 +79,6 @@ const TravelAudit: FC = () => {
           );
         }
         return text;
-      },
-      onFilter: (value: string, record: TableRecord) => {
-        // console.log("value", value);
-        // console.log("record", record);
-        return record.status === value;
       },
     },
     // {
