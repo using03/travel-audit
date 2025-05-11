@@ -325,6 +325,20 @@ const TravelAudit: FC = () => {
   //     action: "",
   //   },
   // ];
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(false);
+  const [adminInfo, setAdminInfo] = useState<AdminInfoType>(INIT_STATE);
+  const [modalTitle, setModalTitle] = useState<string>("this is a title");
+  const [modalContent, setModalContent] = useState<string>("显示失败");
+  const [rejectReason, setRejectReason] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [currentTravelogue, setCurrentTravelogue] = useState<Travelogue>();
+  const [dataSource, setDataSource] = useState<TableRecord[]>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useState<any>(null); // 搜索参数状态
+
   const SearchForm: React.FC = () => {
     const [form] = Form.useForm();
     const [searchSelectedValues, setSearchSelectedValues] = useState([""]);
@@ -332,7 +346,9 @@ const TravelAudit: FC = () => {
     const onSearchSubmit = async () => {
       try {
         const values = form.getFieldsValue();
-        const data = await searchTravelogues(values);
+        setSearchParams(values); // 保存搜索条件
+        setCurrentPage(1); // 重置到第一页
+        const { total, data } = await searchTravelogues(values, 1);
         setDataSource(
           data.map((item: Travelogue) => ({
             key: item.id,
@@ -350,6 +366,7 @@ const TravelAudit: FC = () => {
             action: "",
           }))
         );
+        setTotal(total); // 设置总数据条数
       } catch (error) {
         messageApi.open({
           type: "error",
@@ -365,7 +382,21 @@ const TravelAudit: FC = () => {
     const handleReset = () => {
       form.resetFields();
       setSearchSelectedValues([""]);
+      setSearchParams(null); // 清除搜索条件
+      setCurrentPage(1); // 重置页码
+      fetchTravelogues(1); // 重新获取所有游记
     };
+
+    // 初始化表单值
+    useEffect(() => {
+      if (searchParams) {
+        form.setFieldsValue(searchParams);
+        if (searchParams.status) {
+          setSearchSelectedValues(searchParams.status);
+        }
+      }
+    }, [searchParams]);
+
     const formItems = [
       {
         label: "状态",
@@ -451,18 +482,6 @@ const TravelAudit: FC = () => {
       </Form>
     );
   };
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [hasLoggedIn, setHasLoggedIn] = useState<boolean>(false);
-  const [adminInfo, setAdminInfo] = useState<AdminInfoType>(INIT_STATE);
-  const [modalTitle, setModalTitle] = useState<string>("this is a title");
-  const [modalContent, setModalContent] = useState<string>("显示失败");
-  const [rejectReason, setRejectReason] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [messageApi, contextHolder] = message.useMessage();
-  const [currentTravelogue, setCurrentTravelogue] = useState<Travelogue>();
-  const [dataSource, setDataSource] = useState<TableRecord[]>([]);
-  const [total, setTotal] = useState<number>(0);
 
   // 添加Form引用
   const [loginForm] = Form.useForm();
@@ -759,6 +778,44 @@ const TravelAudit: FC = () => {
     }
   };
 
+  // 修改页码改变处理函数
+  const handlePageChange = async (page: number) => {
+    setCurrentPage(page);
+    if (searchParams) {
+      // 如果有搜索条件，使用保存的条件重新搜索
+      try {
+        const { total, data } = await searchTravelogues(searchParams, page);
+        setDataSource(
+          data.map((item: Travelogue) => ({
+            key: item.id,
+            status:
+              item.status === 0
+                ? "待审核"
+                : item.status === 1
+                ? "已通过"
+                : "未通过",
+            authorID: item.authorID,
+            authorName: item.author,
+            travelID: item.id,
+            travelTitle: item.title,
+            travelDesc: item.desc,
+            action: "",
+          }))
+        );
+        setTotal(total);
+      } catch (error) {
+        messageApi.open({
+          type: "error",
+          content: "获取搜索数据失败",
+        });
+        console.log("获取搜索数据失败", error);
+      }
+    } else {
+      // 如果没有搜索条件，获取所有游记
+      fetchTravelogues(page);
+    }
+  };
+
   useEffect(() => {
     // 检查初始登录状态
     checkAuthStatus();
@@ -805,8 +862,9 @@ const TravelAudit: FC = () => {
                   total: total, // 总数据条数
                   pageSize: 10, // 每页显示条数
                   onChange: (page) => {
-                    fetchTravelogues(page);
+                    handlePageChange(page);
                   },
+                  current: currentPage,
                 }}
               />
             </Card>

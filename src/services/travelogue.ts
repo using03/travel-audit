@@ -63,7 +63,10 @@ export const deleteTravelogue = async (travelID: number) => {
 };
 
 // 通过搜索条件获取游记列表
-export const searchTravelogues = async (searchParams: any) => {
+export const searchTravelogues = async (
+  searchParams: any,
+  page: number = 1
+) => {
   try {
     const queryParams = new URLSearchParams();
 
@@ -78,7 +81,7 @@ export const searchTravelogues = async (searchParams: any) => {
         }
       });
     }
-
+    queryParams.append("page", page.toString());
     const response = await travelogueInstance.get(
       `/travelogues/search?${queryParams.toString()}`
     );
