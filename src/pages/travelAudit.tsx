@@ -39,14 +39,6 @@ import { ColumnsType } from "antd/es/table";
 const { Title, Paragraph } = Typography;
 const { Header, Content } = Layout;
 const { TextArea } = Input;
-// // 将时间戳格式化为"年-月-日"格式的函数
-// function formatDate(timestamp: string) {
-//   const date = new Date(+timestamp);
-//   const year = date.getFullYear();
-//   const month = String(date.getMonth() + 1).padStart(2, "0");
-//   const day = String(date.getDate()).padStart(2, "0");
-//   return `${year}-${month}-${day}`;
-// }
 
 const TravelAudit: FC = () => {
   const columns: ColumnsType<TableRecord> = [
@@ -81,11 +73,6 @@ const TravelAudit: FC = () => {
         return text;
       },
     },
-    // {
-    //   title: "审核ID",
-    //   dataIndex: "reviewID",
-    //   key: "reviewID",
-    // },
     {
       title: "游记ID",
       dataIndex: "travelID",
@@ -107,15 +94,11 @@ const TravelAudit: FC = () => {
       dataIndex: "travelTitle",
       key: "travelTitle",
     },
-    // {
-    //   title: "申请日期",
-    //   dataIndex: "applyDate",
-    //   key: "applyDate",
-    //   render: (text: string) => formatDate(text),
-    //   sorter: (a: TableRecord, b: TableRecord) =>
-    //     Number(a.applyDate) - Number(b.applyDate),
-    //   sortDirections: ["descend", "ascend"],
-    // },
+    {
+      title: "申请日期",
+      dataIndex: "time",
+      key: "time",
+    },
     {
       title: "游记详情以及操作",
       dataIndex: "action",
@@ -345,6 +328,7 @@ const TravelAudit: FC = () => {
             travelID: item.id,
             travelTitle: item.title,
             travelDesc: item.desc,
+            time: item.time,
             action: "",
           }))
         );
@@ -377,7 +361,7 @@ const TravelAudit: FC = () => {
           setSearchSelectedValues(searchParams.status);
         }
       }
-    }, [searchParams]);
+    }, [form]);
 
     const formItems = [
       {
@@ -744,7 +728,7 @@ const TravelAudit: FC = () => {
           travelID: item.id,
           travelTitle: item.title,
           travelDesc: item.desc,
-          // applyDate: item.applyDate || new Date().getTime(),
+          time: item.time,
           action: "",
         }))
       );
@@ -781,6 +765,7 @@ const TravelAudit: FC = () => {
             travelID: item.id,
             travelTitle: item.title,
             travelDesc: item.desc,
+            time: item.time,
             action: "",
           }))
         );
@@ -926,8 +911,8 @@ interface Travelogue {
   status: number;
   reason: string;
   isdeleted: boolean;
+  time: string;
   video?: string;
-  applyDate?: Date;
 }
 
 //表格中每一行的数据结构
@@ -940,7 +925,7 @@ interface TableRecord {
   travelTitle: string;
   travelDesc: string;
   action: string;
-  applyDate?: number;
+  time: string;
 }
 type AdminInfoType = {
   adminname: string;

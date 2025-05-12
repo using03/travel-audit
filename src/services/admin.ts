@@ -41,38 +41,22 @@ export const adminLoginService = async (
   adminname: string,
   password: string
 ) => {
-  try {
-    const response = await authInstance.post("/admin/login", {
-      adminname,
-      password,
-    });
+  const response = await authInstance.post("/admin/login", {
+    adminname,
+    password,
+  });
 
-    return response;
-  } catch (error) {
-    console.error("登录失败:", error);
-
-    throw error;
-  }
+  return response;
 };
 
 // 登出：清除HttpOnly Cookie
 export const adminLogoutService = async () => {
-  try {
-    await authInstance.post("/admin/logout");
-    return true;
-  } catch (error) {
-    console.error("登出失败:", error);
-    return false;
-  }
+  await authInstance.post("/admin/logout");
+  return true;
 };
 
 // 验证登录状态：通过访问需要认证的API来检查
 export const checkAdminAuthStatus = async (): Promise<AuthResponse> => {
-  try {
-    const data = await authInstance.get("/admin/status");
-    return data as unknown as AuthResponse;
-  } catch (error) {
-    console.error("验证登录状态失败:", error);
-    throw error;
-  }
+  const data = await authInstance.get("/admin/status");
+  return data as unknown as AuthResponse;
 };
