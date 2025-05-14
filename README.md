@@ -1,54 +1,104 @@
-# React + TypeScript + Vite
+# Travel Audit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个旅行游记审核系统，基于 React + TypeScript 开发，提供高效的游记内容管理和审核功能。
 
-Currently, two official plugins are available:
+## 功能特点
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 旅行游记管理
+- 高级搜索和筛选
+- 自适应布局（基于 Ant Design）
+- 用户认证和授权
+- 美观的 UI 界面（基于 Ant Design）
 
-## Expanding the ESLint configuration
+## 技术栈
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19
+- TypeScript 5.7
+- Vite 6.3
+- Ant Design 5.24
+- Axios
+- SASS
+- ESLint 9.22
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 快速开始
+
+### 环境要求
+
+- Node.js 16+
+- npm 或 yarn
+
+### 安装
+
+```bash
+# 克隆项目
+git clone https://github.com/using03/travel-audit.git
+
+# 进入项目目录
+cd travel-audit
+
+# 安装依赖
+npm install
+# 或
+yarn install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 开发
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+# 启动开发服务器
+npm run dev
+# 或
+yarn dev
 ```
+
+### 构建
+
+```bash
+# 构建生产版本
+npm run build
+# 或
+yarn build
+```
+
+### 代码检查
+
+```bash
+# 运行 ESLint 检查
+npm run lint
+# 或
+yarn lint
+```
+
+## 项目结构
+
+```
+travel-audit/
+├── src/                # 源代码目录
+│   ├── assets/        # 静态资源
+│   ├── components/    # 组件
+│   ├── pages/         # 页面组件
+│   ├── services/      # API 服务
+│   ├── App.tsx        # 应用入口
+│   └── main.tsx       # 主入口文件
+├── public/            # 公共资源
+├── package.json       # 项目配置
+└── vite.config.ts     # Vite 配置
+```
+
+## 开发指南
+
+### 代码规范
+
+项目使用 ESLint 进行代码规范检查，确保代码质量。主要规则包括：
+
+- React Hooks 规则
+- TypeScript 类型检查
+- 代码格式化
+
+## 贡献指南
+
+1. Fork 项目
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
