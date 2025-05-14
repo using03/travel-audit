@@ -635,7 +635,26 @@ const TravelAudit: FC = () => {
         content: "成功通过游记",
       });
       // 刷新列表
-      fetchTravelogues();
+      const { total, data } = await searchTravelogues(searchParams);
+      setDataSource(
+        data.map((item: Travelogue) => ({
+          key: item.id,
+          status:
+            item.status === 0
+              ? "待审核"
+              : item.status === 1
+              ? "已通过"
+              : "未通过",
+          authorID: item.authorID,
+          authorName: item.author,
+          travelID: item.id,
+          travelTitle: item.title,
+          travelDesc: item.desc,
+          time: item.time,
+          action: "",
+        }))
+      );
+      setTotal(total);
     } catch (error) {
       messageApi.open({
         type: "error",
@@ -661,7 +680,26 @@ const TravelAudit: FC = () => {
         content: "成功拒绝游记",
       });
       // 刷新列表
-      fetchTravelogues();
+      const { total, data } = await searchTravelogues(searchParams);
+      setDataSource(
+        data.map((item: Travelogue) => ({
+          key: item.id,
+          status:
+            item.status === 0
+              ? "待审核"
+              : item.status === 1
+              ? "已通过"
+              : "未通过",
+          authorID: item.authorID,
+          authorName: item.author,
+          travelID: item.id,
+          travelTitle: item.title,
+          travelDesc: item.desc,
+          time: item.time,
+          action: "",
+        }))
+      );
+      setTotal(total);
     } catch (error) {
       messageApi.open({
         type: "error",
@@ -695,7 +733,26 @@ const TravelAudit: FC = () => {
         content: "删除成功",
       });
       // 刷新列表
-      fetchTravelogues();
+      const { total, data } = await searchTravelogues(searchParams);
+      setDataSource(
+        data.map((item: Travelogue) => ({
+          key: item.id,
+          status:
+            item.status === 0
+              ? "待审核"
+              : item.status === 1
+              ? "已通过"
+              : "未通过",
+          authorID: item.authorID,
+          authorName: item.author,
+          travelID: item.id,
+          travelTitle: item.title,
+          travelDesc: item.desc,
+          time: item.time,
+          action: "",
+        }))
+      );
+      setTotal(total);
     } catch (error) {
       messageApi.open({
         type: "error",
